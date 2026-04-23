@@ -2,23 +2,75 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        button { padding: 20px; font-size: 18px; width: 100%; background: #007aff; color: #fff; border: none; border-radius: 10px; }
+        #log { margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 10px; font-family: monospace; font-size: 13px; white-space: pre-wrap; }
+        .ok { color: green; }
+        .err { color: red; }
+    </style>
 </head>
 <body>
-    <h2>Тест отправки</h2>
-    <button id="btn" style="padding: 20px; font-size: 20px;">ОТПРАВИТЬ ТЕСТ</button>
-    <div id="log" style="margin-top: 20px; padding: 10px; background: #eee;"></div>
+    <h2>🧪 Тест tg.sendData()</h2>
+    
+    <button id="test-btn">📤 Отправить тестовые данные</button>
+    
+    <div id="log">
+        <b>Логи:</b>
+    </div>
+
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
+        const logEl = document.getElementById('log');
         
-        document.getElementById('btn').addEventListener('click', function() {
-            document.getElementById('log').innerHTML = 'Отправка...';
-            tg.sendData(JSON.stringify({name: "Тест", message: "Привет"}));
-            document.getElementById('log').innerHTML = '✅ Отправлено!';
-            tg.showAlert('Отправлено!');
-        });
+        function log(msg, type) {
+            const cls = type === 'err' ? 'err' : type === 'ok' ? 'ok' : '';
+            logEl.innerHTML += `\n<span class="${cls}">${msg}</span>`;
+        }
+        
+        try {
+            const tg = window.Telegram.WebApp;
+            log('[1] Telegram WebApp объект: ✓', 'ok');
+            log('[2] tg.initData: ' + (tg.initData ? 'есть' : 'ОТСУТСТВУЕТ!'), tg.initData ? 'ok' : 'err');
+            log('[3] tg.platform: ' + tg.platform);
+            
+            tg.expand();
+            tg.ready();
+            log('[4] tg.expand() + tg.ready() выполнены', 'ok');
+            
+            document.getElementById('test-btn').addEventListener('click', function() {
+                const testData = JSON.stringify({
+                    name: "Тестовый пользователь",
+                    message: "Тестовое сообщение " + new Date().toLocaleTimeString(),
+                    files: []
+                });
+                
+                log('[5] Попытка отправить: ' + testData);
+                
+                try {
+                    tg.sendData(testData);
+                    log('[6] ✅ tg.sendData() выполнен без ошибок!', 'ok');
+                    tg.showAlert('✅ Тестовые данные отправлены боту!');
+                    
+                    setTimeout(function() {
+                        tg.close();
+                    }, 1500);
+                    
+                } catch(e) {
+                    log('[6] ❌ ОШИБКА tg.sendData(): ' + e.message, 'err');
+                    tg.showAlert('❌ Ошибка: ' + e.message);
+                }
+            });
+            
+            tg.BackButton.show();
+            tg.BackButton.onClick(function() {
+                tg.close();
+            });
+            
+        } catch(e) {
+            log('❌ КРИТИЧЕСКАЯ ОШИБКА: ' + e.message, 'err');
+        }
     </script>
 </body>
 </html>
