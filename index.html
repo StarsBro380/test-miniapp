@@ -2,86 +2,347 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Обратная связь</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
-            padding: 20px;
+            padding: 16px;
+            min-height: 100vh;
         }
-        h2 { margin-bottom: 16px; }
+        
+        .container { max-width: 500px; margin: 0 auto; }
+        
+        h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        .subtitle { color: var(--tg-theme-hint-color, #8e8e93); font-size: 14px; margin-bottom: 24px; }
+        
+        .form-group { margin-bottom: 16px; }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
         input, textarea {
-            width: 100%; padding: 12px; margin: 8px 0;
-            border: 1px solid #ccc; border-radius: 8px;
+            width: 100%;
+            padding: 14px 16px;
             font-size: 16px;
+            border: 1px solid var(--tg-theme-hint-color, #c6c6c8);
+            border-radius: 12px;
+            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+            color: var(--tg-theme-text-color, #000000);
+            font-family: inherit;
+            transition: border-color 0.2s;
         }
-        textarea { height: 100px; }
-        button {
-            width: 100%; padding: 16px; margin-top: 12px;
-            background: var(--tg-theme-button-color, #007aff);
-            color: #fff; border: none; border-radius: 8px;
-            font-size: 16px; cursor: pointer;
+        
+        input:focus, textarea:focus { outline: none; border-color: var(--tg-theme-button-color, #007aff); }
+        textarea { min-height: 120px; resize: vertical; }
+        
+        .file-label {
+            display: block;
+            padding: 14px 16px;
+            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+            border: 1px dashed var(--tg-theme-hint-color, #c6c6c8);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--tg-theme-button-color, #007aff);
+            transition: all 0.2s;
         }
-        #status {
-            margin-top: 16px; padding: 12px;
-            background: #f0f0f0; border-radius: 8px;
-            font-family: monospace; font-size: 13px;
+        .file-label:hover { background: #e8e8ed; }
+        .file-label input { display: none; }
+        
+        .file-list { margin-top: 12px; }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 13px;
         }
+        
+        .file-item .remove {
+            background: none; border: none; color: #ff3b30;
+            font-size: 18px; cursor: pointer; padding: 0 4px;
+        }
+        
+        .file-item .size { color: var(--tg-theme-hint-color, #8e8e93); font-size: 11px; margin-left: 8px; }
+        
+        .buttons { display: flex; gap: 12px; margin-top: 24px; }
+        
+        .btn {
+            flex: 1; padding: 16px; font-size: 16px; font-weight: 600;
+            border: none; border-radius: 12px; cursor: pointer; transition: opacity 0.2s;
+        }
+        
+        .btn-primary { background: var(--tg-theme-button-color, #007aff); color: #ffffff; }
+        .btn-secondary { background: var(--tg-theme-secondary-bg-color, #f2f2f7); color: var(--tg-theme-text-color, #000000); }
+        .btn:active { opacity: 0.7; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .success-message { text-align: center; padding: 40px 20px; display: none; }
+        .success-message .icon { font-size: 64px; margin-bottom: 16px; }
+        .success-message h2 { font-size: 22px; margin-bottom: 8px; }
+        .success-message p { color: var(--tg-theme-hint-color, #8e8e93); margin-bottom: 24px; }
+        
+        .char-count { text-align: right; font-size: 12px; color: var(--tg-theme-hint-color, #8e8e93); margin-top: 4px; }
+        
+        .loading { text-align: center; padding: 20px; display: none; }
+        .spinner { width: 40px; height: 40px; border: 3px solid #e0e0e0; border-top-color: #007aff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <h2>🧪 Тестовый Mini App</h2>
-    
-    <input type="text" id="name" placeholder="Ваше имя">
-    <textarea id="message" placeholder="Тестовое сообщение"></textarea>
-    <button id="send-btn">📤 Отправить тест</button>
-    
-    <div id="status">⏳ Ожидание...</div>
+    <div class="container">
+        <!-- Форма -->
+        <div id="form-container">
+            <h1>📝 Обратная связь</h1>
+            <p class="subtitle">Опишите ваш вопрос или предложение. Мы ответим в ближайшее время.</p>
+            
+            <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" id="name" placeholder="Как к вам обращаться?" maxlength="100">
+            </div>
+            
+            <div class="form-group">
+                <label for="message">Сообщение *</label>
+                <textarea id="message" placeholder="Опишите ваш вопрос..." maxlength="2000"></textarea>
+                <div class="char-count"><span id="char-count">0</span>/2000</div>
+            </div>
+            
+            <div class="form-group">
+                <label class="file-label" for="file-input">
+                    📎 Прикрепить файлы (до 5 шт., макс 20 MB)
+                    <input type="file" id="file-input" multiple accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar">
+                </label>
+                <div class="file-list" id="file-list"></div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-secondary" id="cancel-btn">❌ Отмена</button>
+                <button class="btn btn-primary" id="submit-btn" disabled>📤 Отправить</button>
+            </div>
+        </div>
+        
+        <!-- Загрузка -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Отправка обращения...</p>
+        </div>
+        
+        <!-- Успех -->
+        <div class="success-message" id="success-container">
+            <div class="icon">✅</div>
+            <h2>Обращение отправлено!</h2>
+            <p>Спасибо! Мы ответим вам в ближайшее время.</p>
+            <button class="btn btn-primary" id="close-btn">Закрыть</button>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.ready();
         
-        const status = document.getElementById('status');
+        // DOM элементы
+        const formContainer = document.getElementById('form-container');
+        const successContainer = document.getElementById('success-container');
+        const loading = document.getElementById('loading');
+        const nameInput = document.getElementById('name');
+        const messageInput = document.getElementById('message');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const charCount = document.getElementById('char-count');
         
-        function log(msg) {
-            status.innerHTML += '<br>' + msg;
-        }
-        
-        log('✅ Mini App готов');
-        log('📱 Платформа: ' + tg.platform);
+        // Хранилище файлов
+        let selectedFiles = [];
+        const MAX_FILES = 5;
+        const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
         
         // Автозаполнение имени
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('name').value = tg.initDataUnsafe.user.first_name || '';
-            log('👤 Пользователь: ' + tg.initDataUnsafe.user.first_name);
+            const user = tg.initDataUnsafe.user;
+            nameInput.value = user.first_name + (user.last_name ? ' ' + user.last_name : '');
         }
         
-        document.getElementById('send-btn').addEventListener('click', function() {
-            const name = document.getElementById('name').value || 'Гость';
-            const message = document.getElementById('message').value || 'Тест';
+        // Форматирование размера
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        // Валидация
+        function validate() {
+            const hasText = messageInput.value.trim().length > 0;
+            const hasFiles = selectedFiles.length > 0;
+            submitBtn.disabled = !hasText && !hasFiles;
+        }
+        
+        // Подсчёт символов
+        messageInput.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+            validate();
+        });
+        
+        // Обновление списка файлов
+        function updateFileList() {
+            fileList.innerHTML = '';
             
-            const data = JSON.stringify({ name: name, message: message });
+            selectedFiles.forEach((file, index) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                
+                const name = document.createElement('span');
+                name.style.flex = '1';
+                name.style.overflow = 'hidden';
+                name.style.textOverflow = 'ellipsis';
+                name.style.whiteSpace = 'nowrap';
+                name.textContent = file.name;
+                
+                const size = document.createElement('span');
+                size.className = 'size';
+                size.textContent = formatSize(file.size);
+                
+                const remove = document.createElement('button');
+                remove.className = 'remove';
+                remove.textContent = '✕';
+                remove.onclick = function() {
+                    selectedFiles.splice(index, 1);
+                    updateFileList();
+                    validate();
+                };
+                
+                div.appendChild(name);
+                div.appendChild(size);
+                div.appendChild(remove);
+                fileList.appendChild(div);
+            });
             
-            log('📤 Отправка: ' + data);
+            validate();
+        }
+        
+        // Выбор файлов
+        fileInput.addEventListener('change', function(e) {
+            const newFiles = Array.from(e.target.files);
+            
+            // Проверка количества
+            if (selectedFiles.length + newFiles.length > MAX_FILES) {
+                tg.showAlert(`Максимум ${MAX_FILES} файлов`);
+                return;
+            }
+            
+            // Проверка размера
+            for (let file of newFiles) {
+                if (file.size > MAX_SIZE) {
+                    tg.showAlert(`Файл "${file.name}" слишком большой (макс. 20 MB)`);
+                    return;
+                }
+            }
+            
+            selectedFiles = [...selectedFiles, ...newFiles];
+            updateFileList();
+            fileInput.value = '';
+        });
+        
+        // Отправка
+        submitBtn.addEventListener('click', async function() {
+            const name = nameInput.value.trim() || 'Гость';
+            const message = messageInput.value.trim();
+            
+            if (!message && selectedFiles.length === 0) {
+                tg.showAlert('Напишите сообщение или прикрепите файл');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            formContainer.style.display = 'none';
+            loading.style.display = 'block';
             
             try {
-                tg.sendData(data);
-                log('✅ tg.sendData() выполнен!');
-                tg.showAlert('✅ Данные отправлены боту!');
-            } catch(e) {
-                log('❌ Ошибка: ' + e.message);
-                tg.showAlert('❌ Ошибка: ' + e.message);
+                // Конвертируем файлы в base64
+                const filesData = await Promise.all(
+                    selectedFiles.map(file => {
+                        return new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = e => resolve({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: e.target.result
+                            });
+                            reader.readAsDataURL(file);
+                        });
+                    })
+                );
+                
+                const formData = {
+                    name: name,
+                    message: message,
+                    files: filesData
+                };
+                
+                // Отправляем данные боту
+                tg.sendData(JSON.stringify(formData));
+                
+                // Показываем успех
+                loading.style.display = 'none';
+                successContainer.style.display = 'block';
+                
+            } catch (error) {
+                loading.style.display = 'none';
+                formContainer.style.display = 'block';
+                tg.showAlert('Ошибка отправки. Попробуйте ещё раз.');
+                console.error(error);
             }
         });
         
+        // Отмена
+        cancelBtn.addEventListener('click', function() {
+            if (messageInput.value.trim() || selectedFiles.length > 0) {
+                tg.showConfirm('Отменить обращение? Все данные будут потеряны.', function(ok) {
+                    if (ok) tg.close();
+                });
+            } else {
+                tg.close();
+            }
+        });
+        
+        // Закрытие после успеха
+        closeBtn.addEventListener('click', function() {
+            tg.close();
+        });
+        
+        // Кнопка назад
         tg.BackButton.show();
-        tg.BackButton.onClick(() => tg.close());
+        tg.BackButton.onClick(function() {
+            if (messageInput.value.trim() || selectedFiles.length > 0) {
+                tg.showConfirm('Отменить обращение?', function(ok) {
+                    if (ok) tg.close();
+                });
+            } else {
+                tg.close();
+            }
+        });
+        
+        // Стартовая валидация
+        validate();
     </script>
 </body>
 </html>
