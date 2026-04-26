@@ -6,107 +6,515 @@
     <title>Обратная связь</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --card-hover: #222240;
+            --accent: #7c3aed;
+            --accent-light: #a78bfa;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #2d2d4a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            padding: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
         }
-        .container { max-width: 500px; margin: 0 auto; }
-        h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
-        h2 { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
-        .subtitle { color: var(--tg-theme-hint-color, #8e8e93); font-size: 14px; margin-bottom: 24px; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-        input, textarea {
-            width: 100%; padding: 14px 16px; font-size: 16px;
-            border: 1px solid var(--tg-theme-hint-color, #c6c6c8); border-radius: 12px;
-            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            color: var(--tg-theme-text-color, #000000); font-family: inherit;
+
+        /* Фоновые эффекты */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 80%, rgba(167, 139, 250, 0.05) 0%, transparent 60%),
+                        radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
         }
-        textarea { min-height: 100px; resize: vertical; }
-        .btn {
-            width: 100%; padding: 16px; font-size: 16px; font-weight: 600;
-            border: none; border-radius: 12px; cursor: pointer; margin-top: 8px;
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            position: relative;
+            z-index: 1;
         }
-        .btn-primary { background: var(--tg-theme-button-color, #007aff); color: #ffffff; }
-        .btn-secondary { background: var(--tg-theme-secondary-bg-color, #f2f2f7); color: var(--tg-theme-text-color, #000000); }
-        .btn-danger { background: #ff3b30; color: #ffffff; }
-        .btn:disabled { opacity: 0.5; }
-        .ticket-card {
-            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            border-radius: 12px; padding: 16px; margin-bottom: 12px;
-            cursor: pointer;
+
+        /* Заголовок */
+        .header {
+            text-align: center;
+            padding: 24px 0 32px;
         }
-        .ticket-card .status { font-size: 14px; margin-bottom: 4px; }
-        .ticket-card .preview { color: var(--tg-theme-hint-color, #8e8e93); font-size: 13px; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+
+        .header .logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--text), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 5px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
         .tab {
-            flex: 1; padding: 12px; text-align: center;
-            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            border-radius: 10px; cursor: pointer; font-weight: 500;
+            flex: 1;
+            padding: 12px 16px;
+            text-align: center;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-secondary);
+            position: relative;
         }
-        .tab.active { background: var(--tg-theme-button-color, #007aff); color: #fff; }
-        .reply-block {
-            background: #e8f5e9; border-radius: 8px; padding: 10px;
-            margin-top: 8px; font-size: 14px;
+
+        .tab.active {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
         }
-        .loading { text-align: center; padding: 40px; }
+
+        .tab:not(.active):hover {
+            color: var(--text);
+        }
+
+        /* Карточки */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .card.status-open::before { background: var(--success); }
+        .card.status-closed::before { background: var(--text-secondary); }
+
+        .card .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .card .ticket-id {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--accent-light);
+        }
+
+        .card .status-badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-open .status-badge {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-closed .status-badge {
+            background: rgba(148, 163, 184, 0.15);
+            color: var(--text-secondary);
+        }
+
+        .card .preview {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card .reply-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--accent-light);
+            margin-top: 8px;
+        }
+
+        /* Форма */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input, .textarea {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 15px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .input:focus, .textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        .textarea {
+            min-height: 130px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* Кнопки */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #6d28d9);
+            color: #fff;
+            box-shadow: 0 6px 24px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #3d3d5c;
+            box-shadow: none;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            background: var(--card-hover);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            margin-top: 8px;
+        }
+
+        .btn-icon {
+            width: auto;
+            padding: 10px 16px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Детали обращения */
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .message-bubble {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .reply-bubble {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 8px;
+        }
+
+        .reply-bubble .reply-header {
+            display: flex;
+            align-content: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .reply-bubble .reply-admin {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-light);
+        }
+
+        .reply-bubble .reply-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .reply-bubble .reply-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        /* Анимации */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-up {
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Спиннер */
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     <div class="container" id="app">
         <!-- Загрузка -->
-        <div id="loading" class="loading">⏳ Загрузка...</div>
-        
+        <div id="loading" style="text-align:center;padding:60px 20px;">
+            <div class="spinner"></div>
+            <p style="color:var(--text-secondary)">Загрузка...</p>
+        </div>
+
         <!-- Главный экран -->
         <div id="main-screen" style="display:none;">
+            <div class="header">
+                <div class="logo">💬</div>
+                <h1>Обратная связь</h1>
+                <p class="subtitle">Мы всегда на связи и готовы помочь</p>
+            </div>
+
             <div class="tabs">
                 <div class="tab active" id="tab-new" onclick="showTab('new')">📝 Новое</div>
-                <div class="tab" id="tab-my" onclick="showTab('my')">📋 Мои обращения</div>
+                <div class="tab" id="tab-my" onclick="showTab('my')">📋 История</div>
             </div>
-            
+
             <!-- Форма -->
-            <div id="tab-new-content">
-                <h1>📝 Обратная связь</h1>
-                <p class="subtitle">Опишите ваш вопрос или предложение</p>
-                
+            <div id="tab-new-content" class="slide-up">
                 <div class="form-group">
                     <label>Ваше имя</label>
-                    <input type="text" id="name" placeholder="Как к вам обращаться?">
+                    <input class="input" type="text" id="name" placeholder="Как к вам обращаться?">
                 </div>
-                
+
                 <div class="form-group">
-                    <label>Сообщение *</label>
-                    <textarea id="message" placeholder="Опишите ваш вопрос..."></textarea>
+                    <label>Сообщение</label>
+                    <textarea class="textarea" id="message" placeholder="Опишите ваш вопрос или предложение..." maxlength="2000"></textarea>
+                    <div class="char-count"><span id="char-count">0</span> / 2000</div>
                 </div>
-                
-                <button class="btn btn-primary" id="submit-btn" disabled onclick="submitTicket()">📤 Отправить</button>
+
+                <button class="btn btn-primary" id="submit-btn" disabled onclick="submitTicket()">
+                    ✨ Отправить обращение
+                </button>
             </div>
-            
+
             <!-- Список обращений -->
             <div id="tab-my-content" style="display:none;">
-                <h2>📋 Мои обращения</h2>
                 <div id="tickets-list"></div>
             </div>
         </div>
-        
+
         <!-- Детали обращения -->
-        <div id="ticket-detail" style="display:none;">
-            <button class="btn btn-secondary" onclick="goBack()">← Назад</button>
-            <div id="ticket-detail-content" style="margin-top:16px;"></div>
-        </div>
-        
-        <!-- Ответ админа -->
+        <div id="ticket-detail" style="display:none;"></div>
+
+        <!-- Экран ответа -->
         <div id="reply-screen" style="display:none;">
-            <button class="btn btn-secondary" onclick="goBack()">← Назад</button>
-            <h2 style="margin-top:16px;">💬 Ответить</h2>
-            <div class="form-group">
-                <textarea id="reply-text" placeholder="Текст ответа..."></textarea>
+            <button class="btn btn-secondary" onclick="goBack()">← Назад к обращению</button>
+            <div style="margin-top:20px;">
+                <div class="form-group">
+                    <label>Ваш ответ</label>
+                    <textarea class="textarea" id="reply-text" placeholder="Введите текст ответа..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="sendReply()">💬 Отправить ответ</button>
             </div>
-            <button class="btn btn-primary" onclick="sendReply()">📤 Отправить ответ</button>
         </div>
     </div>
 
@@ -115,129 +523,147 @@
         tg.expand();
         tg.ready();
         
+        // Настройка цвета верхней панели
+        tg.setHeaderColor('#0f0f1a');
+        tg.setBackgroundColor('#0f0f1a');
+
         const API_URL = "https://feedback-bot-1-6z88.onrender.com";
         const ADMIN_IDS = [39444699, 5711571612];
-        
+
         let currentUser = null;
         let currentTicketId = null;
         let currentReplyUserId = null;
-        
-        // Инициализация
+
         function init() {
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 currentUser = tg.initDataUnsafe.user;
                 document.getElementById('name').value = currentUser.first_name || '';
-                
+
                 if (currentUser.id) {
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('main-screen').style.display = 'block';
-                    
-                    // Валидация
+
                     document.getElementById('message').addEventListener('input', function() {
+                        document.getElementById('char-count').textContent = this.value.length;
                         document.getElementById('submit-btn').disabled = this.value.trim().length === 0;
                     });
                 }
             } else {
-                document.getElementById('loading').innerHTML = '❌ Ошибка: нет данных пользователя';
+                document.getElementById('loading').innerHTML = '<p style="color:var(--danger)">❌ Ошибка загрузки</p>';
             }
         }
-        
-        // Переключение вкладок
+
         function showTab(tab) {
             document.getElementById('tab-new').classList.toggle('active', tab === 'new');
             document.getElementById('tab-my').classList.toggle('active', tab === 'my');
             document.getElementById('tab-new-content').style.display = tab === 'new' ? 'block' : 'none';
             document.getElementById('tab-my-content').style.display = tab === 'my' ? 'block' : 'none';
-            
             if (tab === 'my') loadMyTickets();
         }
-        
-        // Загрузка обращений
+
         async function loadMyTickets() {
             const list = document.getElementById('tickets-list');
-            list.innerHTML = '⏳ Загрузка...';
-            
+            list.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner"></div></div>';
+
             try {
                 const resp = await fetch(API_URL + '/api/tickets?user_id=' + currentUser.id);
                 const data = await resp.json();
-                
+
                 if (!data.ok || !data.tickets.length) {
-                    list.innerHTML = '<p>У вас пока нет обращений.</p>';
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <p>У вас пока нет обращений</p>
+                            <button class="btn btn-secondary" style="margin-top:16px;" onclick="showTab('new')">Создать первое</button>
+                        </div>`;
                     return;
                 }
-                
+
                 list.innerHTML = '';
                 for (const ticket of data.tickets) {
-                    const card = document.createElement('div');
-                    card.className = 'ticket-card';
-                    card.onclick = function() { showTicketDetail(ticket); };
-                    
-                    const status = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
+                    const status = ticket.status === 'open' ? 'status-open' : 'status-closed';
+                    const statusText = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
                     const msgs = ticket.messages || [];
-                    const preview = msgs.length > 0 ? msgs[0].substring(0, 50) : '...';
+                    const preview = msgs.length > 0 ? msgs[0] : 'Нет текста';
                     const replies = ticket.replies || [];
-                    const replyInfo = replies.length > 0 ? ' | 💬' + replies.length : '';
-                    
+                    const replyInfo = replies.length > 0 ? `<div class="reply-count">💬 ${replies.length} ответ${replies.length > 1 ? 'ов' : ''}</div>` : '';
+
+                    const card = document.createElement('div');
+                    card.className = `card ${status} slide-up`;
+                    card.onclick = function() { showTicketDetail(ticket); };
                     card.innerHTML = `
-                        <div class="status">${status} #${ticket.id}${replyInfo}</div>
+                        <div class="card-header">
+                            <span class="ticket-id">#${ticket.id}</span>
+                            <span class="status-badge">${statusText}</span>
+                        </div>
                         <div class="preview">${preview}</div>
+                        ${replyInfo}
                     `;
                     list.appendChild(card);
                 }
             } catch (e) {
-                list.innerHTML = '<p>❌ Ошибка загрузки</p>';
+                list.innerHTML = '<p style="color:var(--danger);text-align:center;">❌ Ошибка загрузки</p>';
             }
         }
-        
-        // Детали обращения
+
         function showTicketDetail(ticket) {
             document.getElementById('main-screen').style.display = 'none';
-            document.getElementById('ticket-detail').style.display = 'block';
-            
-            const content = document.getElementById('ticket-detail-content');
+            const detail = document.getElementById('ticket-detail');
+            detail.style.display = 'block';
+            detail.className = 'fade-in';
+
             const status = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
-            
-            let html = `<h2>📌 Обращение #${ticket.id}</h2>`;
-            html += `<p>Статус: ${status}</p>`;
-            
-            if (ticket.messages) {
-                html += '<h3>📝 Сообщения:</h3>';
+            let html = `<button class="btn btn-secondary" onclick="goBack()">← Назад</button>`;
+            html += `<div style="margin-top:20px;">`;
+            html += `<h2 style="font-size:22px;margin-bottom:8px;">Обращение #${ticket.id}</h2>`;
+            html += `<p style="color:var(--text-secondary);margin-bottom:24px;">${status}</p>`;
+
+            if (ticket.messages && ticket.messages.length > 0) {
+                html += `<div class="detail-section"><h3>📝 Сообщения</h3>`;
                 for (const msg of ticket.messages) {
-                    html += `<p>• ${msg}</p>`;
+                    html += `<div class="message-bubble">${msg}</div>`;
                 }
+                html += `</div>`;
             }
-            
+
             if (ticket.replies && ticket.replies.length > 0) {
-                html += '<h3>📢 Ответы:</h3>';
+                html += `<div class="detail-section"><h3>💬 Ответы</h3>`;
                 for (const reply of ticket.replies) {
-                    html += `<div class="reply-block"><b>${reply.admin}</b> (${reply.time}):<br>${reply.text}</div>`;
+                    html += `
+                        <div class="reply-bubble">
+                            <div class="reply-header">
+                                <span class="reply-admin">${reply.admin}</span>
+                                <span class="reply-time">${reply.time}</span>
+                            </div>
+                            <div class="reply-text">${reply.text}</div>
+                        </div>`;
                 }
+                html += `</div>`;
             }
-            
-            // Кнопка "Ответить" для админов
+
             if (ADMIN_IDS.includes(currentUser.id) && ticket.status === 'open') {
                 currentTicketId = ticket.id;
                 currentReplyUserId = ticket.user_id;
-                html += `<button class="btn btn-primary" onclick="showReplyScreen()" style="margin-top:12px;">💬 Ответить</button>`;
+                html += `<button class="btn btn-primary" onclick="showReplyScreen()">💬 Ответить</button>`;
             }
-            
-            content.innerHTML = html;
+
+            html += `</div>`;
+            detail.innerHTML = html;
         }
-        
-        // Экран ответа
+
         function showReplyScreen() {
             document.getElementById('ticket-detail').style.display = 'none';
             document.getElementById('reply-screen').style.display = 'block';
+            document.getElementById('reply-screen').className = 'fade-in';
         }
-        
-        // Отправка ответа
+
         async function sendReply() {
             const text = document.getElementById('reply-text').value.trim();
             if (!text) {
                 tg.showAlert('Введите текст ответа');
                 return;
             }
-            
+
             try {
                 const resp = await fetch(API_URL + '/api/reply', {
                     method: 'POST',
@@ -249,32 +675,30 @@
                         text: text
                     })
                 });
-                
+
                 const data = await resp.json();
                 if (data.ok) {
                     tg.showAlert('✅ Ответ отправлен!');
                     document.getElementById('reply-screen').style.display = 'none';
-                    document.getElementById('main-screen').style.display = 'block';
                     document.getElementById('reply-text').value = '';
-                    showTab('my');
+                    goBack();
                 } else {
-                    tg.showAlert('❌ Ошибка: ' + data.error);
+                    tg.showAlert('❌ ' + data.error);
                 }
             } catch (e) {
                 tg.showAlert('❌ Ошибка сети');
             }
         }
-        
-        // Отправка нового обращения
+
         async function submitTicket() {
             const name = document.getElementById('name').value.trim() || 'Гость';
             const message = document.getElementById('message').value.trim();
-            
             if (!message) return;
-            
-            document.getElementById('submit-btn').disabled = true;
-            document.getElementById('submit-btn').textContent = '⏳ Отправка...';
-            
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Отправка...';
+
             try {
                 const resp = await fetch(API_URL + '/api/submit_ticket', {
                     method: 'POST',
@@ -286,33 +710,34 @@
                         username: currentUser.username || ''
                     })
                 });
-                
+
                 const data = await resp.json();
                 if (data.ok) {
                     tg.showAlert('✅ Обращение #' + data.ticket_id + ' отправлено!');
                     document.getElementById('message').value = '';
-                    document.getElementById('submit-btn').disabled = true;
-                    document.getElementById('submit-btn').textContent = '📤 Отправить';
+                    document.getElementById('char-count').textContent = '0';
+                    btn.disabled = true;
+                    btn.textContent = '✨ Отправить обращение';
+                    showTab('my');
                 } else {
-                    tg.showAlert('❌ Ошибка: ' + data.error);
-                    document.getElementById('submit-btn').disabled = false;
-                    document.getElementById('submit-btn').textContent = '📤 Отправить';
+                    tg.showAlert('❌ ' + data.error);
+                    btn.disabled = false;
+                    btn.textContent = '✨ Отправить обращение';
                 }
             } catch (e) {
                 tg.showAlert('❌ Ошибка сети');
-                document.getElementById('submit-btn').disabled = false;
-                document.getElementById('submit-btn').textContent = '📤 Отправить';
+                btn.disabled = false;
+                btn.textContent = '✨ Отправить обращение';
             }
         }
-        
-        // Назад
+
         function goBack() {
             document.getElementById('ticket-detail').style.display = 'none';
             document.getElementById('reply-screen').style.display = 'none';
             document.getElementById('main-screen').style.display = 'block';
             showTab('my');
         }
-        
+
         tg.BackButton.show();
         tg.BackButton.onClick(function() {
             if (document.getElementById('reply-screen').style.display === 'block') {
@@ -324,7 +749,7 @@
                 tg.close();
             }
         });
-        
+
         init();
     </script>
 </body>
