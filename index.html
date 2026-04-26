@@ -17,7 +17,6 @@
             --border: #2d2d4a;
             --success: #10b981;
             --danger: #ef4444;
-            --warning: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,7 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* Фоновые эффекты */
         body::before {
             content: '';
             position: fixed;
@@ -53,7 +51,6 @@
             z-index: 1;
         }
 
-        /* Заголовок */
         .header {
             text-align: center;
             padding: 24px 0 32px;
@@ -94,7 +91,6 @@
             line-height: 1.5;
         }
 
-        /* Табы */
         .tabs {
             display: flex;
             gap: 6px;
@@ -113,9 +109,8 @@
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             color: var(--text-secondary);
-            position: relative;
         }
 
         .tab.active {
@@ -124,18 +119,13 @@
             box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
         }
 
-        .tab:not(.active):hover {
-            color: var(--text);
-        }
-
-        /* Карточки */
         .card {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 20px;
             margin-bottom: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             cursor: pointer;
             position: relative;
             overflow: hidden;
@@ -209,7 +199,6 @@
             margin-top: 8px;
         }
 
-        /* Форма */
         .form-group {
             margin-bottom: 20px;
         }
@@ -233,7 +222,7 @@
             border-radius: 14px;
             color: var(--text);
             font-family: inherit;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         .input:focus, .textarea:focus {
@@ -255,7 +244,6 @@
             margin-top: 6px;
         }
 
-        /* Кнопки */
         .btn {
             width: 100%;
             padding: 16px 24px;
@@ -264,28 +252,8 @@
             border: none;
             border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             letter-spacing: 0.3px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:active::after {
-            width: 300px;
-            height: 300px;
         }
 
         .btn-primary {
@@ -294,17 +262,11 @@
             box-shadow: 0 6px 24px rgba(124, 58, 237, 0.3);
         }
 
-        .btn-primary:hover {
-            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
-            transform: translateY(-1px);
-        }
-
         .btn-primary:disabled {
             background: #3d3d5c;
             box-shadow: none;
             color: var(--text-secondary);
             cursor: not-allowed;
-            transform: none;
         }
 
         .btn-secondary {
@@ -314,28 +276,6 @@
             margin-top: 8px;
         }
 
-        .btn-secondary:hover {
-            border-color: var(--accent);
-            background: var(--card-hover);
-        }
-
-        .btn-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            margin-top: 8px;
-        }
-
-        .btn-icon {
-            width: auto;
-            padding: 10px 16px;
-            font-size: 13px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Детали обращения */
         .detail-section {
             margin-bottom: 20px;
         }
@@ -369,7 +309,6 @@
 
         .reply-bubble .reply-header {
             display: flex;
-            align-content: center;
             justify-content: space-between;
             margin-bottom: 8px;
         }
@@ -388,29 +327,17 @@
         .reply-bubble .reply-text {
             font-size: 14px;
             line-height: 1.6;
-            color: var(--text);
         }
 
-        /* Анимации */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .slide-up {
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUp 0.4s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease;
-        }
-
-        /* Пустое состояние */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -427,7 +354,6 @@
             font-size: 14px;
         }
 
-        /* Спиннер */
         .spinner {
             width: 32px;
             height: 32px;
@@ -442,13 +368,8 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Скроллбар */
         ::-webkit-scrollbar {
             width: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
         }
 
         ::-webkit-scrollbar-thumb {
@@ -491,9 +412,7 @@
                     <div class="char-count"><span id="char-count">0</span> / 2000</div>
                 </div>
 
-                <button class="btn btn-primary" id="submit-btn" disabled onclick="submitTicket()">
-                    ✨ Отправить обращение
-                </button>
+                <button class="btn btn-primary" id="submit-btn" disabled onclick="submitTicket()">✨ Отправить обращение</button>
             </div>
 
             <!-- Список обращений -->
@@ -523,7 +442,6 @@
         tg.expand();
         tg.ready();
         
-        // Настройка цвета верхней панели
         tg.setHeaderColor('#0f0f1a');
         tg.setBackgroundColor('#0f0f1a');
 
@@ -549,7 +467,7 @@
                     });
                 }
             } else {
-                document.getElementById('loading').innerHTML = '<p style="color:var(--danger)">❌ Ошибка загрузки</p>';
+                document.getElementById('loading').innerHTML = '<p style="color:var(--danger)">Ошибка загрузки</p>';
             }
         }
 
@@ -570,19 +488,14 @@
                 const data = await resp.json();
 
                 if (!data.ok || !data.tickets.length) {
-                    list.innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📭</div>
-                            <p>У вас пока нет обращений</p>
-                            <button class="btn btn-secondary" style="margin-top:16px;" onclick="showTab('new')">Создать первое</button>
-                        </div>`;
+                    list.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>У вас пока нет обращений</p><button class="btn btn-secondary" style="margin-top:16px;" onclick="showTab('new')">Создать первое</button></div>`;
                     return;
                 }
 
                 list.innerHTML = '';
                 for (const ticket of data.tickets) {
                     const status = ticket.status === 'open' ? 'status-open' : 'status-closed';
-                    const statusText = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
+                    const statusText = ticket.status === 'open' ? 'Открыто' : 'Закрыто';
                     const msgs = ticket.messages || [];
                     const preview = msgs.length > 0 ? msgs[0] : 'Нет текста';
                     const replies = ticket.replies || [];
@@ -591,18 +504,11 @@
                     const card = document.createElement('div');
                     card.className = `card ${status} slide-up`;
                     card.onclick = function() { showTicketDetail(ticket); };
-                    card.innerHTML = `
-                        <div class="card-header">
-                            <span class="ticket-id">#${ticket.id}</span>
-                            <span class="status-badge">${statusText}</span>
-                        </div>
-                        <div class="preview">${preview}</div>
-                        ${replyInfo}
-                    `;
+                    card.innerHTML = `<div class="card-header"><span class="ticket-id">#${ticket.id}</span><span class="status-badge">${statusText}</span></div><div class="preview">${preview}</div>${replyInfo}`;
                     list.appendChild(card);
                 }
             } catch (e) {
-                list.innerHTML = '<p style="color:var(--danger);text-align:center;">❌ Ошибка загрузки</p>';
+                list.innerHTML = '<p style="color:var(--danger);text-align:center;">Ошибка загрузки</p>';
             }
         }
 
@@ -610,16 +516,15 @@
             document.getElementById('main-screen').style.display = 'none';
             const detail = document.getElementById('ticket-detail');
             detail.style.display = 'block';
-            detail.className = 'fade-in';
 
-            const status = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
-            let html = `<button class="btn btn-secondary" onclick="goBack()">← Назад</button>`;
+            const status = ticket.status === 'open' ? 'Открыто' : 'Закрыто';
+            let html = `<button class="btn btn-secondary" onclick="goBack()">Назад</button>`;
             html += `<div style="margin-top:20px;">`;
             html += `<h2 style="font-size:22px;margin-bottom:8px;">Обращение #${ticket.id}</h2>`;
             html += `<p style="color:var(--text-secondary);margin-bottom:24px;">${status}</p>`;
 
             if (ticket.messages && ticket.messages.length > 0) {
-                html += `<div class="detail-section"><h3>📝 Сообщения</h3>`;
+                html += `<div class="detail-section"><h3>Сообщения</h3>`;
                 for (const msg of ticket.messages) {
                     html += `<div class="message-bubble">${msg}</div>`;
                 }
@@ -627,16 +532,9 @@
             }
 
             if (ticket.replies && ticket.replies.length > 0) {
-                html += `<div class="detail-section"><h3>💬 Ответы</h3>`;
+                html += `<div class="detail-section"><h3>Ответы</h3>`;
                 for (const reply of ticket.replies) {
-                    html += `
-                        <div class="reply-bubble">
-                            <div class="reply-header">
-                                <span class="reply-admin">${reply.admin}</span>
-                                <span class="reply-time">${reply.time}</span>
-                            </div>
-                            <div class="reply-text">${reply.text}</div>
-                        </div>`;
+                    html += `<div class="reply-bubble"><div class="reply-header"><span class="reply-admin">${reply.admin}</span><span class="reply-time">${reply.time}</span></div><div class="reply-text">${reply.text}</div></div>`;
                 }
                 html += `</div>`;
             }
@@ -644,7 +542,7 @@
             if (ADMIN_IDS.includes(currentUser.id) && ticket.status === 'open') {
                 currentTicketId = ticket.id;
                 currentReplyUserId = ticket.user_id;
-                html += `<button class="btn btn-primary" onclick="showReplyScreen()">💬 Ответить</button>`;
+                html += `<button class="btn btn-primary" onclick="showReplyScreen()">Ответить</button>`;
             }
 
             html += `</div>`;
@@ -654,39 +552,29 @@
         function showReplyScreen() {
             document.getElementById('ticket-detail').style.display = 'none';
             document.getElementById('reply-screen').style.display = 'block';
-            document.getElementById('reply-screen').className = 'fade-in';
         }
 
         async function sendReply() {
             const text = document.getElementById('reply-text').value.trim();
-            if (!text) {
-                tg.showAlert('Введите текст ответа');
-                return;
-            }
+            if (!text) { tg.showAlert('Введите текст ответа'); return; }
 
             try {
                 const resp = await fetch(API_URL + '/api/reply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        admin_id: currentUser.id,
-                        user_id: currentReplyUserId,
-                        ticket_id: currentTicketId,
-                        text: text
-                    })
+                    body: JSON.stringify({ admin_id: currentUser.id, user_id: currentReplyUserId, ticket_id: currentTicketId, text: text })
                 });
-
                 const data = await resp.json();
                 if (data.ok) {
-                    tg.showAlert('✅ Ответ отправлен!');
+                    tg.showAlert('Ответ отправлен!');
                     document.getElementById('reply-screen').style.display = 'none';
                     document.getElementById('reply-text').value = '';
                     goBack();
                 } else {
-                    tg.showAlert('❌ ' + data.error);
+                    tg.showAlert(data.error);
                 }
             } catch (e) {
-                tg.showAlert('❌ Ошибка сети');
+                tg.showAlert('Ошибка сети');
             }
         }
 
@@ -697,37 +585,31 @@
 
             const btn = document.getElementById('submit-btn');
             btn.disabled = true;
-            btn.textContent = '⏳ Отправка...';
+            btn.textContent = 'Отправка...';
 
             try {
                 const resp = await fetch(API_URL + '/api/submit_ticket', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: currentUser.id,
-                        name: name,
-                        message: message,
-                        username: currentUser.username || ''
-                    })
+                    body: JSON.stringify({ user_id: currentUser.id, name: name, message: message, username: currentUser.username || '' })
                 });
-
                 const data = await resp.json();
                 if (data.ok) {
-                    tg.showAlert('✅ Обращение #' + data.ticket_id + ' отправлено!');
+                    tg.showAlert('Обращение #' + data.ticket_id + ' отправлено!');
                     document.getElementById('message').value = '';
                     document.getElementById('char-count').textContent = '0';
                     btn.disabled = true;
-                    btn.textContent = '✨ Отправить обращение';
+                    btn.textContent = 'Отправить обращение';
                     showTab('my');
                 } else {
-                    tg.showAlert('❌ ' + data.error);
+                    tg.showAlert(data.error);
                     btn.disabled = false;
-                    btn.textContent = '✨ Отправить обращение';
+                    btn.textContent = 'Отправить обращение';
                 }
             } catch (e) {
-                tg.showAlert('❌ Ошибка сети');
+                tg.showAlert('Ошибка сети');
                 btn.disabled = false;
-                btn.textContent = '✨ Отправить обращение';
+                btn.textContent = 'Отправить обращение';
             }
         }
 
