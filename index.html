@@ -31,17 +31,18 @@
 
         .bg-image {
             position: fixed;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
+            top: -40px;
+            left: -40px;
+            right: -40px;
+            bottom: -40px;
             background-image: url('photo_2026-04-20_20-26-15.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             filter: blur(25px) brightness(0.25);
             z-index: 0;
-            transform: scale(1.1);
+            transform: scale(1.15);
+            will-change: transform;
         }
 
         .bg-overlay {
@@ -241,6 +242,27 @@
                 }
             } else {
                 document.getElementById('loading').innerHTML = '<p style="color:var(--danger)">Ошибка загрузки</p>';
+            }
+
+            // ===== ПАРАЛЛАКС =====
+            var bg = document.querySelector('.bg-image');
+            if (bg) {
+                // Телефон
+                if (window.DeviceOrientationEvent) {
+                    window.addEventListener('deviceorientation', function(e) {
+                        var gamma = e.gamma || 0;
+                        var beta = e.beta || 0;
+                        var moveX = gamma / 45 * 12;
+                        var moveY = beta / 90 * 12;
+                        bg.style.transform = 'scale(1.15) translate(' + moveX + 'px, ' + moveY + 'px)';
+                    });
+                }
+                // Компьютер
+                document.addEventListener('mousemove', function(e) {
+                    var x = (e.clientX / window.innerWidth - 0.5) * 16;
+                    var y = (e.clientY / window.innerHeight - 0.5) * 16;
+                    bg.style.transform = 'scale(1.15) translate(' + x + 'px, ' + y + 'px)';
+                });
             }
         }
 
