@@ -7,14 +7,13 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #0f0f1a;
-            --card: #1a1a2e;
-            --card-hover: #222240;
+            --card: rgba(26, 26, 46, 0.85);
+            --card-hover: rgba(34, 34, 64, 0.9);
             --accent: #7c3aed;
             --accent-light: #a78bfa;
             --text: #f1f5f9;
             --text-secondary: #94a3b8;
-            --border: #2d2d4a;
+            --border: rgba(45, 45, 74, 0.6);
             --success: #10b981;
             --danger: #ef4444;
         }
@@ -23,24 +22,41 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
-            background: var(--bg);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
+            background: #0f0f1a;
         }
 
-        body::before {
-            content: '';
+        /* РАЗМЫТЫЙ ФОН */
+        .bg-image {
             position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(ellipse at 30% 20%, rgba(124, 58, 237, 0.08) 0%, transparent 60%),
-                        radial-gradient(ellipse at 70% 80%, rgba(167, 139, 250, 0.05) 0%, transparent 60%),
-                        radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 60%);
-            pointer-events: none;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background-image: url('photo_2026-04-20_20-26-15.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(25px) brightness(0.25);
             z-index: 0;
+            transform: scale(1.1);
+        }
+
+        /* Декоративные градиенты поверх */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(124, 58, 237, 0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 80%, rgba(167, 139, 250, 0.1) 0%, transparent 60%),
+                        radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+            z-index: 1;
+            pointer-events: none;
         }
 
         .container {
@@ -48,7 +64,7 @@
             margin: 0 auto;
             padding: 20px 16px 40px;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
 
         .header {
@@ -66,7 +82,7 @@
             justify-content: center;
             font-size: 32px;
             margin: 0 auto 16px;
-            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 8px 32px rgba(124, 58, 237, 0.4);
             animation: float 3s ease-in-out infinite;
         }
 
@@ -99,6 +115,7 @@
             padding: 5px;
             margin-bottom: 24px;
             border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
         }
 
         .tab {
@@ -129,11 +146,12 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .card:hover {
             border-color: var(--accent);
-            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.1);
+            box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
             transform: translateY(-2px);
         }
 
@@ -171,12 +189,12 @@
         }
 
         .status-open .status-badge {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.2);
             color: var(--success);
         }
 
         .status-closed .status-badge {
-            background: rgba(148, 163, 184, 0.15);
+            background: rgba(148, 163, 184, 0.2);
             color: var(--text-secondary);
         }
 
@@ -223,12 +241,13 @@
             color: var(--text);
             font-family: inherit;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .input:focus, .textarea:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
         }
 
         .textarea {
@@ -259,11 +278,11 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--accent), #6d28d9);
             color: #fff;
-            box-shadow: 0 6px 24px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
         }
 
         .btn-primary:disabled {
-            background: #3d3d5c;
+            background: rgba(61, 61, 92, 0.7);
             box-shadow: none;
             color: var(--text-secondary);
             cursor: not-allowed;
@@ -274,6 +293,7 @@
             color: var(--text);
             border: 1px solid var(--border);
             margin-top: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .detail-section {
@@ -297,14 +317,16 @@
             margin-bottom: 8px;
             font-size: 14px;
             line-height: 1.6;
+            backdrop-filter: blur(10px);
         }
 
         .reply-bubble {
-            background: rgba(124, 58, 237, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.2);
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.25);
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .reply-bubble .reply-header {
@@ -334,25 +356,15 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .slide-up {
-            animation: slideUp 0.4s ease;
-        }
+        .slide-up { animation: slideUp 0.4s ease; }
 
         .empty-state {
             text-align: center;
             padding: 40px 20px;
         }
 
-        .empty-state .icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.6;
-        }
-
-        .empty-state p {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
+        .empty-state .icon { font-size: 64px; margin-bottom: 16px; opacity: 0.6; }
+        .empty-state p { color: var(--text-secondary); font-size: 14px; }
 
         .spinner {
             width: 32px;
@@ -364,21 +376,17 @@
             margin: 0 auto 16px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
     </style>
 </head>
 <body>
+    <!-- РАЗМЫТЫЙ ФОН -->
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
     <div class="container" id="app">
         <!-- Загрузка -->
         <div id="loading" style="text-align:center;padding:60px 20px;">
