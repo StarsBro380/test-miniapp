@@ -16,6 +16,7 @@
         }
         .container { max-width: 500px; margin: 0 auto; }
         h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        h2 { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
         .subtitle { color: var(--tg-theme-hint-color, #8e8e93); font-size: 14px; margin-bottom: 24px; }
         .form-group { margin-bottom: 16px; }
         label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
@@ -25,81 +26,87 @@
             background: var(--tg-theme-secondary-bg-color, #f2f2f7);
             color: var(--tg-theme-text-color, #000000); font-family: inherit;
         }
-        textarea { min-height: 120px; resize: vertical; }
-        .file-label {
-            display: block; padding: 14px 16px;
-            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            border: 1px dashed var(--tg-theme-hint-color, #c6c6c8); border-radius: 12px;
-            text-align: center; cursor: pointer; font-size: 14px;
-            color: var(--tg-theme-button-color, #007aff);
-        }
-        .file-label input { display: none; }
-        .file-list { margin-top: 12px; }
-        .file-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 12px; background: var(--tg-theme-secondary-bg-color, #f2f2f7);
-            border-radius: 8px; margin-bottom: 6px; font-size: 13px;
-        }
-        .file-item .remove { background: none; border: none; color: #ff3b30; font-size: 18px; cursor: pointer; }
-        .buttons { display: flex; gap: 12px; margin-top: 24px; }
+        textarea { min-height: 100px; resize: vertical; }
         .btn {
-            flex: 1; padding: 16px; font-size: 16px; font-weight: 600;
-            border: none; border-radius: 12px; cursor: pointer;
+            width: 100%; padding: 16px; font-size: 16px; font-weight: 600;
+            border: none; border-radius: 12px; cursor: pointer; margin-top: 8px;
         }
         .btn-primary { background: var(--tg-theme-button-color, #007aff); color: #ffffff; }
         .btn-secondary { background: var(--tg-theme-secondary-bg-color, #f2f2f7); color: var(--tg-theme-text-color, #000000); }
+        .btn-danger { background: #ff3b30; color: #ffffff; }
         .btn:disabled { opacity: 0.5; }
-        .success-message { text-align: center; padding: 40px 20px; display: none; }
-        .success-message .icon { font-size: 64px; margin-bottom: 16px; }
-        .success-message h2 { font-size: 22px; margin-bottom: 8px; }
-        .success-message p { color: var(--tg-theme-hint-color, #8e8e93); margin-bottom: 24px; }
-        .loading { text-align: center; padding: 40px; display: none; }
-        .char-count { text-align: right; font-size: 12px; color: var(--tg-theme-hint-color, #8e8e93); margin-top: 4px; }
+        .ticket-card {
+            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+            border-radius: 12px; padding: 16px; margin-bottom: 12px;
+            cursor: pointer;
+        }
+        .ticket-card .status { font-size: 14px; margin-bottom: 4px; }
+        .ticket-card .preview { color: var(--tg-theme-hint-color, #8e8e93); font-size: 13px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+        .tab {
+            flex: 1; padding: 12px; text-align: center;
+            background: var(--tg-theme-secondary-bg-color, #f2f2f7);
+            border-radius: 10px; cursor: pointer; font-weight: 500;
+        }
+        .tab.active { background: var(--tg-theme-button-color, #007aff); color: #fff; }
+        .reply-block {
+            background: #e8f5e9; border-radius: 8px; padding: 10px;
+            margin-top: 8px; font-size: 14px;
+        }
+        .loading { text-align: center; padding: 40px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Форма -->
-        <div id="form-container">
-            <h1>📝 Обратная связь</h1>
-            <p class="subtitle">Опишите ваш вопрос или предложение. Мы ответим в ближайшее время.</p>
-            
-            <div class="form-group">
-                <label for="name">Ваше имя</label>
-                <input type="text" id="name" placeholder="Как к вам обращаться?">
-            </div>
-            
-            <div class="form-group">
-                <label for="message">Сообщение *</label>
-                <textarea id="message" placeholder="Опишите ваш вопрос..." maxlength="2000"></textarea>
-                <div class="char-count"><span id="char-count">0</span>/2000</div>
-            </div>
-            
-            <div class="form-group">
-                <label class="file-label" for="file-input">
-                    📎 Прикрепить файлы (до 5 шт.)
-                    <input type="file" id="file-input" multiple accept="image/*,.pdf,.doc,.docx,.txt,.zip">
-                </label>
-                <div class="file-list" id="file-list"></div>
-            </div>
-            
-            <div class="buttons">
-                <button class="btn btn-secondary" id="cancel-btn">❌ Отмена</button>
-                <button class="btn btn-primary" id="submit-btn" disabled>📤 Отправить</button>
-            </div>
-        </div>
-        
+    <div class="container" id="app">
         <!-- Загрузка -->
-        <div class="loading" id="loading">
-            <p>⏳ Отправка обращения...</p>
+        <div id="loading" class="loading">⏳ Загрузка...</div>
+        
+        <!-- Главный экран -->
+        <div id="main-screen" style="display:none;">
+            <div class="tabs">
+                <div class="tab active" id="tab-new" onclick="showTab('new')">📝 Новое</div>
+                <div class="tab" id="tab-my" onclick="showTab('my')">📋 Мои обращения</div>
+            </div>
+            
+            <!-- Форма -->
+            <div id="tab-new-content">
+                <h1>📝 Обратная связь</h1>
+                <p class="subtitle">Опишите ваш вопрос или предложение</p>
+                
+                <div class="form-group">
+                    <label>Ваше имя</label>
+                    <input type="text" id="name" placeholder="Как к вам обращаться?">
+                </div>
+                
+                <div class="form-group">
+                    <label>Сообщение *</label>
+                    <textarea id="message" placeholder="Опишите ваш вопрос..."></textarea>
+                </div>
+                
+                <button class="btn btn-primary" id="submit-btn" disabled onclick="submitTicket()">📤 Отправить</button>
+            </div>
+            
+            <!-- Список обращений -->
+            <div id="tab-my-content" style="display:none;">
+                <h2>📋 Мои обращения</h2>
+                <div id="tickets-list"></div>
+            </div>
         </div>
         
-        <!-- Успех -->
-        <div class="success-message" id="success-container">
-            <div class="icon">✅</div>
-            <h2>Обращение отправлено!</h2>
-            <p>Спасибо! Мы ответим вам в ближайшее время.</p>
-            <button class="btn btn-primary" id="close-btn">Закрыть</button>
+        <!-- Детали обращения -->
+        <div id="ticket-detail" style="display:none;">
+            <button class="btn btn-secondary" onclick="goBack()">← Назад</button>
+            <div id="ticket-detail-content" style="margin-top:16px;"></div>
+        </div>
+        
+        <!-- Ответ админа -->
+        <div id="reply-screen" style="display:none;">
+            <button class="btn btn-secondary" onclick="goBack()">← Назад</button>
+            <h2 style="margin-top:16px;">💬 Ответить</h2>
+            <div class="form-group">
+                <textarea id="reply-text" placeholder="Текст ответа..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="sendReply()">📤 Отправить ответ</button>
         </div>
     </div>
 
@@ -108,204 +115,217 @@
         tg.expand();
         tg.ready();
         
-        // ===== НАСТРОЙКИ ОСНОВНОГО БОТА =====
-        const BOT_TOKEN = "8626444342:AAESEy8xC2NTRMKWewFHGnnBxtjfYZ-R2Fg";
+        const API_URL = "https://feedback-bot-1-6z88.onrender.com";
         const ADMIN_IDS = [39444699, 5711571612];
         
-        const formContainer = document.getElementById('form-container');
-        const successContainer = document.getElementById('success-container');
-        const loading = document.getElementById('loading');
-        const nameInput = document.getElementById('name');
-        const messageInput = document.getElementById('message');
-        const fileInput = document.getElementById('file-input');
-        const fileList = document.getElementById('file-list');
-        const submitBtn = document.getElementById('submit-btn');
-        const charCount = document.getElementById('char-count');
+        let currentUser = null;
+        let currentTicketId = null;
+        let currentReplyUserId = null;
         
-        let selectedFiles = [];
-        const MAX_FILES = 5;
-        const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
-        
-        // Автозаполнение имени
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const user = tg.initDataUnsafe.user;
-            nameInput.value = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-        }
-        
-        // Подсчёт символов
-        messageInput.addEventListener('input', function() {
-            charCount.textContent = this.value.length;
-            validateForm();
-        });
-        
-        // Валидация
-        function validateForm() {
-            const hasText = messageInput.value.trim().length > 0;
-            const hasFiles = selectedFiles.length > 0;
-            submitBtn.disabled = !hasText && !hasFiles;
-        }
-        
-        // Обновление списка файлов
-        function updateFileList() {
-            fileList.innerHTML = '';
-            selectedFiles.forEach((file, index) => {
-                const div = document.createElement('div');
-                div.className = 'file-item';
+        // Инициализация
+        function init() {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                currentUser = tg.initDataUnsafe.user;
+                document.getElementById('name').value = currentUser.first_name || '';
                 
-                const name = document.createElement('span');
-                name.style.flex = '1';
-                name.style.overflow = 'hidden';
-                name.style.textOverflow = 'ellipsis';
-                name.style.whiteSpace = 'nowrap';
-                name.textContent = file.name;
-                
-                const remove = document.createElement('button');
-                remove.className = 'remove';
-                remove.textContent = '✕';
-                remove.onclick = function() {
-                    selectedFiles.splice(index, 1);
-                    updateFileList();
-                    validateForm();
-                };
-                
-                div.appendChild(name);
-                div.appendChild(remove);
-                fileList.appendChild(div);
-            });
-            validateForm();
-        }
-        
-        // Выбор файлов
-        fileInput.addEventListener('change', function(e) {
-            const newFiles = Array.from(e.target.files);
-            
-            if (selectedFiles.length + newFiles.length > MAX_FILES) {
-                tg.showAlert(`Максимум ${MAX_FILES} файлов`);
-                return;
+                if (currentUser.id) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('main-screen').style.display = 'block';
+                    
+                    // Валидация
+                    document.getElementById('message').addEventListener('input', function() {
+                        document.getElementById('submit-btn').disabled = this.value.trim().length === 0;
+                    });
+                }
+            } else {
+                document.getElementById('loading').innerHTML = '❌ Ошибка: нет данных пользователя';
             }
+        }
+        
+        // Переключение вкладок
+        function showTab(tab) {
+            document.getElementById('tab-new').classList.toggle('active', tab === 'new');
+            document.getElementById('tab-my').classList.toggle('active', tab === 'my');
+            document.getElementById('tab-new-content').style.display = tab === 'new' ? 'block' : 'none';
+            document.getElementById('tab-my-content').style.display = tab === 'my' ? 'block' : 'none';
             
-            for (let file of newFiles) {
-                if (file.size > MAX_SIZE) {
-                    tg.showAlert(`Файл "${file.name}" слишком большой (макс. 20 MB)`);
+            if (tab === 'my') loadMyTickets();
+        }
+        
+        // Загрузка обращений
+        async function loadMyTickets() {
+            const list = document.getElementById('tickets-list');
+            list.innerHTML = '⏳ Загрузка...';
+            
+            try {
+                const resp = await fetch(API_URL + '/api/tickets?user_id=' + currentUser.id);
+                const data = await resp.json();
+                
+                if (!data.ok || !data.tickets.length) {
+                    list.innerHTML = '<p>У вас пока нет обращений.</p>';
                     return;
+                }
+                
+                list.innerHTML = '';
+                for (const ticket of data.tickets) {
+                    const card = document.createElement('div');
+                    card.className = 'ticket-card';
+                    card.onclick = function() { showTicketDetail(ticket); };
+                    
+                    const status = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
+                    const msgs = ticket.messages || [];
+                    const preview = msgs.length > 0 ? msgs[0].substring(0, 50) : '...';
+                    const replies = ticket.replies || [];
+                    const replyInfo = replies.length > 0 ? ' | 💬' + replies.length : '';
+                    
+                    card.innerHTML = `
+                        <div class="status">${status} #${ticket.id}${replyInfo}</div>
+                        <div class="preview">${preview}</div>
+                    `;
+                    list.appendChild(card);
+                }
+            } catch (e) {
+                list.innerHTML = '<p>❌ Ошибка загрузки</p>';
+            }
+        }
+        
+        // Детали обращения
+        function showTicketDetail(ticket) {
+            document.getElementById('main-screen').style.display = 'none';
+            document.getElementById('ticket-detail').style.display = 'block';
+            
+            const content = document.getElementById('ticket-detail-content');
+            const status = ticket.status === 'open' ? '🟢 Открыто' : '🔴 Закрыто';
+            
+            let html = `<h2>📌 Обращение #${ticket.id}</h2>`;
+            html += `<p>Статус: ${status}</p>`;
+            
+            if (ticket.messages) {
+                html += '<h3>📝 Сообщения:</h3>';
+                for (const msg of ticket.messages) {
+                    html += `<p>• ${msg}</p>`;
                 }
             }
             
-            selectedFiles = [...selectedFiles, ...newFiles];
-            updateFileList();
-            fileInput.value = '';
-        });
-        
-        // Отправка формы
-        submitBtn.addEventListener('click', async function() {
-            const name = nameInput.value.trim() || 'Гость';
-            const message = messageInput.value.trim();
+            if (ticket.replies && ticket.replies.length > 0) {
+                html += '<h3>📢 Ответы:</h3>';
+                for (const reply of ticket.replies) {
+                    html += `<div class="reply-block"><b>${reply.admin}</b> (${reply.time}):<br>${reply.text}</div>`;
+                }
+            }
             
-            if (!message && selectedFiles.length === 0) {
-                tg.showAlert('Напишите сообщение или прикрепите файл');
+            // Кнопка "Ответить" для админов
+            if (ADMIN_IDS.includes(currentUser.id) && ticket.status === 'open') {
+                currentTicketId = ticket.id;
+                currentReplyUserId = ticket.user_id;
+                html += `<button class="btn btn-primary" onclick="showReplyScreen()" style="margin-top:12px;">💬 Ответить</button>`;
+            }
+            
+            content.innerHTML = html;
+        }
+        
+        // Экран ответа
+        function showReplyScreen() {
+            document.getElementById('ticket-detail').style.display = 'none';
+            document.getElementById('reply-screen').style.display = 'block';
+        }
+        
+        // Отправка ответа
+        async function sendReply() {
+            const text = document.getElementById('reply-text').value.trim();
+            if (!text) {
+                tg.showAlert('Введите текст ответа');
                 return;
             }
             
-            submitBtn.disabled = true;
-            formContainer.style.display = 'none';
-            loading.style.display = 'block';
-            
             try {
-                const userId = tg.initDataUnsafe?.user?.id || 'неизвестен';
-                const username = tg.initDataUnsafe?.user?.username || '';
-                const userInfo = username ? `${name} (@${username})` : name;
-                
-                // Отправляем подтверждение пользователю
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                const resp = await fetch(API_URL + '/api/reply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: userId,
-                        text: '✅ Ваше обращение отправлено! Администратор скоро ответит.'
+                        admin_id: currentUser.id,
+                        user_id: currentReplyUserId,
+                        ticket_id: currentTicketId,
+                        text: text
                     })
                 });
                 
-                // Отправляем уведомление админам
-                let adminText = `📩 Новое обращение через Mini App\n\n`;
-                adminText += `👤 ${userInfo}\n`;
-                adminText += `🆔 ${userId}\n`;
-                if (message) {
-                    adminText += `\n📝 Сообщение:\n${message}\n`;
+                const data = await resp.json();
+                if (data.ok) {
+                    tg.showAlert('✅ Ответ отправлен!');
+                    document.getElementById('reply-screen').style.display = 'none';
+                    document.getElementById('main-screen').style.display = 'block';
+                    document.getElementById('reply-text').value = '';
+                    showTab('my');
+                } else {
+                    tg.showAlert('❌ Ошибка: ' + data.error);
                 }
-                if (selectedFiles.length > 0) {
-                    adminText += `\n📎 Файлов: ${selectedFiles.length} шт.\n`;
-                }
-                
-                for (const adminId of ADMIN_IDS) {
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            chat_id: adminId,
-                            text: adminText
-                        })
-                    });
-                }
-                
-                // Отправляем файлы админам
-                for (const file of selectedFiles) {
-                    const reader = new FileReader();
-                    reader.onload = async function(e) {
-                        const base64 = e.target.result.split(',')[1];
-                        for (const adminId of ADMIN_IDS) {
-                            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    chat_id: adminId,
-                                    document: { file_data: base64, file_name: file.name },
-                                    caption: `📎 Файл от ${userInfo}`
-                                })
-                            });
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-                
-                loading.style.display = 'none';
-                successContainer.style.display = 'block';
-                
-            } catch (error) {
-                loading.style.display = 'none';
-                formContainer.style.display = 'block';
-                submitBtn.disabled = false;
-                tg.showAlert('Ошибка отправки. Попробуйте ещё раз.');
+            } catch (e) {
+                tg.showAlert('❌ Ошибка сети');
             }
-        });
+        }
         
-        // Отмена
-        document.getElementById('cancel-btn').addEventListener('click', function() {
-            if (messageInput.value.trim() || selectedFiles.length > 0) {
-                tg.showConfirm('Отменить обращение? Все данные будут потеряны.', function(ok) {
-                    if (ok) tg.close();
+        // Отправка нового обращения
+        async function submitTicket() {
+            const name = document.getElementById('name').value.trim() || 'Гость';
+            const message = document.getElementById('message').value.trim();
+            
+            if (!message) return;
+            
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').textContent = '⏳ Отправка...';
+            
+            try {
+                const resp = await fetch(API_URL + '/api/submit_ticket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        name: name,
+                        message: message,
+                        username: currentUser.username || ''
+                    })
                 });
-            } else {
-                tg.close();
+                
+                const data = await resp.json();
+                if (data.ok) {
+                    tg.showAlert('✅ Обращение #' + data.ticket_id + ' отправлено!');
+                    document.getElementById('message').value = '';
+                    document.getElementById('submit-btn').disabled = true;
+                    document.getElementById('submit-btn').textContent = '📤 Отправить';
+                } else {
+                    tg.showAlert('❌ Ошибка: ' + data.error);
+                    document.getElementById('submit-btn').disabled = false;
+                    document.getElementById('submit-btn').textContent = '📤 Отправить';
+                }
+            } catch (e) {
+                tg.showAlert('❌ Ошибка сети');
+                document.getElementById('submit-btn').disabled = false;
+                document.getElementById('submit-btn').textContent = '📤 Отправить';
             }
-        });
+        }
         
-        // Закрытие после успеха
-        document.getElementById('close-btn').addEventListener('click', function() {
-            tg.close();
-        });
+        // Назад
+        function goBack() {
+            document.getElementById('ticket-detail').style.display = 'none';
+            document.getElementById('reply-screen').style.display = 'none';
+            document.getElementById('main-screen').style.display = 'block';
+            showTab('my');
+        }
         
         tg.BackButton.show();
         tg.BackButton.onClick(function() {
-            if (messageInput.value.trim() || selectedFiles.length > 0) {
-                tg.showConfirm('Отменить обращение?', function(ok) {
-                    if (ok) tg.close();
-                });
+            if (document.getElementById('reply-screen').style.display === 'block') {
+                document.getElementById('reply-screen').style.display = 'none';
+                document.getElementById('ticket-detail').style.display = 'block';
+            } else if (document.getElementById('ticket-detail').style.display === 'block') {
+                goBack();
             } else {
                 tg.close();
             }
         });
         
-        validateForm();
+        init();
     </script>
 </body>
 </html>
